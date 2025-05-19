@@ -16,3 +16,57 @@ The **Node.js Event Loop** enables non-blocking I/O by offloading operations and
 > Between each phase, the **microtask queue** is processed (includes `process.nextTick` and `Promise.then`).
 
 ---
+
+## 🌀 Decorators
+
+In Node.js (or more precisely, in JavaScript/TypeScript), decorators are a special kind of declaration that can be attached to a class, method, property, or parameter to modify its behavior. They are mostly used in TypeScript and not natively supported in JavaScript yet, though they are part of the ECMAScript proposal.
+
+### 🎯 Types of Decorators
+
+- Class Decorator
+- Method Decorator
+- Property Decorator
+- Parameter Decorator
+
+```ts
+// Method Decorator
+
+function LogMethod(
+  target: any,
+  propertyName: string,
+  descriptor: PropertyDescriptor
+) {
+  const originalMethod = descriptor.value;
+  descriptor.value = function (...args: any[]) {
+    console.log(`Calling ${propertyName} with`, args);
+    return originalMethod.apply(this, args);
+  };
+}
+
+class Calculator {
+  @LogMethod
+  add(a: number, b: number) {
+    return a + b;
+  }
+}
+
+const calc = new Calculator();
+calc.add(2, 3); // Logs: Calling add with [2, 3]
+```
+
+```ts
+// Property Decorator
+function Readonly(target: any, propertyKey: string) {
+  Object.defineProperty(target, propertyKey, {
+    writable: false,
+  });
+}
+
+class Example {
+  @Readonly
+  name = 'Test';
+}
+
+const e = new Example();
+e.name = 'Changed'; // This will fail silently or throw in strict mode
+```
