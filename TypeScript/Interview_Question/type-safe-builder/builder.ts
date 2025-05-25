@@ -17,6 +17,8 @@ interface SelectPhase {
 
 interface WherePhase {
   where(condition: string): LimitPhase;
+  limit(count: number): BuildStep;
+  build(): string;
 }
 
 interface LimitPhase {
@@ -40,16 +42,31 @@ class QueryBuilder implements SelectPhase, WherePhase, LimitPhase, BuildStep {
     return this;
   }
 
+  where(condition: string): LimitPhase {
+    if (condition.length < 1 && condition.split(' ').length < 3) {
+      throw new Error('Invalid condition passed');
+    }
 
-  where(condition: string) : LimitPhase {
-    if ()
+    this.query = this.query + ' WHERE ' + condition;
+    return this;
+  }
+
+  limit(count: number): BuildStep {
+    if (count < 1) {
+      throw new Error('Not valid limit');
+    }
+
+    this.query = this.query + ' LIMIT ' + count;
+    return this;
+  }
+
+  build(): string {
+    return this.query;
   }
 }
 
 const query = new QueryBuilder()
-  .select('name', 'age') // ✅
-  .where('age > 25') // ✅
-  .limit(10) // ✅
+  .select('name', 'age') // ✅ // ✅// ✅
   .build();
 
 new QueryBuilder().where('age > 25').select('name'); // ❌ Type error: invalid order
