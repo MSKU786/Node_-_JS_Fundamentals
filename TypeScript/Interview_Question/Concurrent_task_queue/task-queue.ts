@@ -3,50 +3,46 @@
 Task: Build a queue that runs promises in parallel (max N at once).
 
 */
-type ApiResponse = {
-  id: number,
-  data: string
-}
+class TaskQueue<T> {
+  private concurrency: number;
+  private current: number;
+  queue: Array<{
+    task: () => Promise<T>;
+    resolve: (value: T) => void;
+    reject: (reason?: any) => void;
+  }> = [];
 
-class TaskQueue<T>{
-  size: number;
-  queue: Array<() => Promise<T>> = [];
-  running: number = 0;
   constructor(limit: number) {
-    this.size =  limit;
+    this.concurrency = limit;
+    this.current = 0;
   }
 
-  add(task: () => Promise<T>): Promise<T> {
+  add(task: () => Promise<T>) {
     return new Promise((resolve, reject) => {
-      const run = () => {
-        this.running++;
-        task().then(resolve, reject).finally(() => {
-          this.running--;
-          this.next();
-        });
-      }
-
-      if (this.running < this.size) {
-        run();
-      } else {
-        this.queue.push(task);
-      }
-    })
+      this.queue.push({ task, resolve, reject });
+      this.next();
+    });
   }
 
-  private next() : void {
-    if (this.queue.length > 0 && this.running < this.size) {
-      const newTask = this.queue.shift();
-      if (newTask) newTask();
+  private next() {
+    if (this.current >= this.concurrency || this.queue.length === 0) {
+      return;
     }
-  }
 
-   
+    const item = this.queue.shift();
+    if (!item) {
+      return;
+    }
+    const { task, resolve, reject } = item;
+    this.current++;
+    task()
+      .then(resolve)
+      .catch(reject)
+      .finally(() => {
+        this.current--;
+        this.next();
+      });
+  }
 }
 
 const queue = new TaskQueue<ApiResponse>(2); // 2 concurrent
-queue.add(() => fetch("/api/1")).then(...);
-queue.add(() => fetch("/api/2")).then(...);
-queue.add(() => fetch("/api/3")); // Waits until slot free
-
-
