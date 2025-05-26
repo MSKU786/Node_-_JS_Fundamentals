@@ -1,29 +1,28 @@
-/*
-
-Trying to create a rate limiter based on role 
-
-
-*/
+import { Request, Response, NextFunction } from 'express';
 
 enum Capacity {
-  'free' = 10,
-  'standard' = 100,
-  'premium' = 1000,
+  free = 10,
+  standard = 100,
+  premium = 1000,
 }
 
-function rateLimiter(req: Request, res: Response) {
+async function rateLimiter(req: Request, res: Response, next: NextFunction) {
   const token = req.header('Authorization');
+  if (!token) return res.status(401).send('No token');
 
-  const { userId, userRole } = fetchRole(token);
+  const { userId, userRole } = await fetchRole(token);
+  const limit = Capacity[userRole];
+  const key = `rate:${userId}`;
 
-  const checkIfExits = fetchUserFromRedis(userId);
-
-  if (checkIfExits) {
-    if (Capacity[userRole] > fetchOverallRequest(userRole)) {
-      updateRedis(userRole, 60000);
-      next();
-    }
-  } else {
-    res.status(403).send('Too may request');
+  // Atomically increment and set expiry if new
+  const current = await redis.incr(key);
+  if (current === 1) {
+    await redis.expire(key, 60); // 60 seconds window
   }
+
+  if (current > limit) {
+    return res.status(429).send('Too many requests');
+  }
+
+  next();
 }
