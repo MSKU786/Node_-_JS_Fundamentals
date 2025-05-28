@@ -11,7 +11,7 @@ const tickets: Map<number, Ticket> = new Map();
 let ticketIdCounter = 1;
 
 // Create a new Ticket
-export const createTicket = (n: number): Ticket => {
+export const generateTicket = (n: number): Ticket => {
   const lines = generateRandomLines(n);
 
   const ticket: Ticket = {
