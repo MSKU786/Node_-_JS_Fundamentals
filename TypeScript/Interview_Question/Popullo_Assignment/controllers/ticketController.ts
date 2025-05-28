@@ -3,12 +3,13 @@ import {
   getTicketById,
   getTickets,
   Ticket,
+  updateTicket,
 } from '../services/ticketService';
 
 export const createTicket = (req, res) => {
   try {
     const { numberOfLines } = req.body;
-    if (numberOfLines || numberOfLines <= 0) {
+    if (!numberOfLines || numberOfLines <= 0) {
       return res.status(400).json({ message: 'Invalid number of lines' });
     }
 
@@ -42,6 +43,20 @@ export const fetchOneTicket = (req, res) => {
   }
 };
 
-export const updateTicket = (req, res) => {};
+export const updateTicketController = (req, res) => {
+  try {
+    const { numberOfLines } = req.body;
+
+    if (!numberOfLines || numberOfLines <= 0) {
+      return res.status(400).json({ message: 'Invalid number of lines' });
+    }
+
+    const { id } = req.params;
+    const ticket: Ticket = updateTicket(Number(id), numberOfLines);
+    return res.status(200).json({ ticket });
+  } catch (err) {
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
 export const checkTicketStatus = (req, res) => {};

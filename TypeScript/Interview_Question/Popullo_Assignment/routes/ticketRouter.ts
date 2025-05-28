@@ -1,12 +1,11 @@
-const { Router } = require('express');
-
-const {
+import {
   createTicket,
   fetchAllTicket,
   fetchOneTicket,
-  updateTicket,
-  checkTicketStatus,
-} = require('../controllers/ticketController');
+  updateTicketController,
+} from '../controllers/ticketController';
+
+import { Router } from 'express';
 
 const ticketRouter = Router();
 
@@ -20,6 +19,6 @@ ticketRouter.post('/', createTicket);
 ticketRouter.get('/:id', fetchOneTicket);
 
 // Update a specific ticket
-ticketRouter.put('/:id', updateTicket);
+ticketRouter.put('/:id', updateTicketController);
 
-module.exports = ticketRouter;
+export default ticketRouter;
