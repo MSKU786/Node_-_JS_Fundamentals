@@ -1,76 +1,78 @@
-const express = require('express');
+import express from 'express';
+import jobRouter from './routes/jobRoutes.js';
 
 const app = express();
 
 app.use(express.json());
 
-let current = 1;
-const jobStatusMap = new Map();
-const jobQueue = [];
-const MAX_CONCURRENCY = 3;
-let currentRunning = 0;
+app.use('/job-queue', jobRouter);
+// let current = 1;
+// const jobStatusMap = new Map();
+// const jobQueue = [];
+// const MAX_CONCURRENCY = 3;
+// let currentRunning = 0;
 
-app.get('/job-queue/status', (req, res) => {
-  const pending = [];
-  const running = [];
-  const completed = [];
+// app.get('/job-queue/status', (req, res) => {
+//   const pending = [];
+//   const running = [];
+//   const completed = [];
 
-  for (let [key, value] of jobStatusMap) {
-    let status = value.status;
-    if (status === 'Pending') pending.push(key);
-    else if (status === 'Running') running.push(key);
-    else completed.push(key);
+//   for (let [key, value] of jobStatusMap) {
+//     let status = value.status;
+//     if (status === 'Pending') pending.push(key);
+//     else if (status === 'Running') running.push(key);
+//     else completed.push(key);
 
-    const data = {
-      pending: pending,
-      running: running,
-      completed: completed,
-    };
+//     const data = {
+//       pending: pending,
+//       running: running,
+//       completed: completed,
+//     };
 
-    res.status(200).json(data);
-  }
-});
+//     res.status(200).json(data);
+//   }
+// });
 
-app.post('/job-queue/jobs', (req, res) => {
-  const jobId = `job-${current++}`;
-  jobStatusMap.set(jobId, {
-    status: 'Pending',
-  });
-  jobQueue.push(jobId);
-  processQueue();
-  res.status(201).json({ jobId });
-});
+// app.post('/job-queue/jobs', (req, res) => {
+//   const jobId = `job-${current++}`;
+//   jobStatusMap.set(jobId, {
+//     status: 'Pending',
+//   });
+//   jobQueue.push(jobId);
+//   processQueue();
+//   res.status(201).json({ jobId });
+// });
 
-async function processQueue() {
-  if (currentRunning >= MAX_CONCURRENCY && jobQueue.length <= 0) {
-    return;
-  }
+// async function processQueue() {
+//   if (currentRunning >= MAX_CONCURRENCY && jobQueue.length <= 0) {
+//     return;
+//   }
 
-  const jobId = jobQueue.shift();
+//   const jobId = jobQueue.shift();
 
-  if (!jobId) {
-    return;
-  }
+//   if (!jobId) {
+//     return;
+//   }
 
-  currentRunning++;
-  await simulateJob(jobId);
-  jobStatusMap.set(jobId, {
-    status: 'Completed',
-  });
-  console.log(`${jobId} is completed`);
-  currentRunning--;
-  processQueue();
-}
+//   currentRunning++;
+//   await simulateJob(jobId);
+//   jobStatusMap.set(jobId, {
+//     status: 'Completed',
+//   });
+//   console.log(`${jobId} is completed`);
+//   currentRunning--;
+//   processQueue();
+// }
 
-function simulateJob(jobId) {
-  return new Promise((resolve, reject) => {
-    const timeout = Math.floor(Math.random() * (5 - 2)) + 2;
-    setTimeout(() => {
-      jobStatusMap.set(jobId, 'Running');
-      resolve();
-    }, timeout);
-  });
-}
+// function simulateJob(jobId) {
+//   return new Promise((resolve, reject) => {
+//     const timeout = Math.floor(Math.random() * (5 - 2)) + 2;
+//     setTimeout(() => {
+//       jobStatusMap.set(jobId, 'Running');
+//       resolve();
+//     }, timeout);
+//   });
+// }
 
 app.listen(8000, () => {
   console.log('Server listening on port 8000');

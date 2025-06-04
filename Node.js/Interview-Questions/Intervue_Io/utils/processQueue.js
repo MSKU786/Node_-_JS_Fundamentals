@@ -1,9 +1,25 @@
-const { currentRunning, MAX_CONCURRENCY, jobQueue } = require('../data');
+import {
+  currentRunning,
+  MAX_CONCURRENCY,
+  jobQueue,
+  jobStatusMap,
+} from '../data';
 
-async function processQueue() {
+export async function processQueue() {
   if (currentRunning >= MAX_CONCURRENCY && jobQueue.length <= 0) return;
 
   const jobId = jobQueue.shift();
   currentRunning++;
-  await 
+  await sinulateJobs;
+  currentRunning--;
+}
+
+export function sinulateJobs(jobId) {
+  return new Promise((resolve, reject) => {
+    let timeout = Math.floor(Math.random() * (5 - 2)) + 2;
+    setTimeout(() => {
+      jobStatusMap.set(jobId, 'Running');
+      resolve();
+    }, timeout);
+  });
 }

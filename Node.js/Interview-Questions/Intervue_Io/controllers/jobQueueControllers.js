@@ -1,4 +1,5 @@
-import { current, jobQueue, jobStatusMap } from '../data';
+import { current, jobQueue, jobStatusMap } from '../data.js';
+import { processQueue } from '../utils/queueProcessor.js';
 
 export const jobQueueStatusController = (req, res) => {
   const pending = [];
@@ -13,8 +14,10 @@ export const jobQueueStatusController = (req, res) => {
         break;
       case 'Running':
         running.push(key);
+        break;
       case 'Completed':
         completed.push(key);
+        break;
     }
   }
   const data = {
@@ -34,5 +37,5 @@ export const addJobController = (req, res) => {
 
   jobQueue.push(jobId);
   processQueue();
-  res.status(201).json({ jsonId });
+  res.status(201).json({ jobId });
 };
