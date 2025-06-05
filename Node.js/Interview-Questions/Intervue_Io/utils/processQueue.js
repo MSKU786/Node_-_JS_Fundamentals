@@ -10,11 +10,27 @@ export async function processQueue() {
 
   const jobId = jobQueue.shift();
   currentRunning++;
-  await sinulateJobs;
+  await simulateJobs(jobId);
   currentRunning--;
 }
 
-export function sinulateJobs(jobId) {
+export function deletePendingJobId(jobId) {
+  if (!jobId && !jobStatusMap.has(jobId)) {
+    return false;
+  }
+
+  const jobData = jobStatusMap.get(jobId);
+  if (jobData.status !== 'Pending') {
+    return false;
+  }
+
+  let indexOfJob = jobQueue.indexOf(jobId);
+  jobQueue.splice(indexOfJob, 1);
+  jobStatusMap.delete(jobId);
+  return true;
+}
+
+function simulateJobs(jobId) {
   return new Promise((resolve, reject) => {
     let timeout = Math.floor(Math.random() * (5 - 2)) + 2;
     setTimeout(() => {

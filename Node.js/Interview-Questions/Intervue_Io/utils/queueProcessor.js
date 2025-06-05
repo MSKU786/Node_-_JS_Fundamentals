@@ -24,6 +24,7 @@ export async function processQueue() {
     console.log(`${jobId} is completed`);
   } catch (error) {
     console.error(`Error processing job ${jobId}:`, error);
+
     // Optionally implement retry logic here
   } finally {
     currentRunning--;

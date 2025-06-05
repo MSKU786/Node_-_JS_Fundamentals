@@ -39,3 +39,18 @@ export const addJobController = (req, res) => {
   processQueue();
   res.status(201).json({ jobId });
 };
+
+
+export const deleteJobId = (req, res) => {
+  const {id} = req.params;
+
+  if(deletePendingJobId(id)) {
+    const data = {
+      jobId: id,
+      status: "success"
+    }
+    res.status(200).json(data);
+  }
+
+  res.status(404).json({"msg" : "Issue while deleting the job Id"})
+}
