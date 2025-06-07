@@ -75,10 +75,10 @@ function printCards(withDrawCards: Cards[]) {
   return sortedWithdrawCards;
 }
 
-const runSimulation = async (deckId: string) => {
+const runSimulation = async (deckId: string, count: number = 1) => {
   try {
-    const withDrawCards = await drawCards(deckId, 1);
-    return printCards(withDrawCards);
+    const withDrawCards = await drawCards(deckId, count);
+    return withDrawCards;
   } catch {
     throw new Error('Error while fetchign the data');
   }
@@ -91,13 +91,16 @@ async function simulateGame(n: number = 2) {
   let remainingCards = 52;
   while (remainingCards > 0) {
     const hand = await runSimulation(deck_id);
+    console.log(currentPlayer, hand);
     playerArray[currentPlayer] = [...playerArray[currentPlayer], hand];
     if (
       playerArray[currentPlayer]?.length >= 5 &&
       isStraightHand(playerArray[currentPlayer])
     ) {
+      console.log(playerArray[currentPlayer]);
       return currentPlayer + 1;
     }
+    currentPlayer++;
     currentPlayer = currentPlayer % n;
     remainingCards--;
   }
@@ -105,6 +108,10 @@ async function simulateGame(n: number = 2) {
 
 const isStraightHand = (cards: Cards[]) => {
   let continousCount = 0;
+
+  cards.sort((a, b) => cardOrder.indexOf(a.value) - cardOrder.indexOf(b.value));
+
+  console.log('Hand', cards);
 
   for (let i = 1; i < cards.length; i++) {
     if (
@@ -124,7 +131,3 @@ const isStraightHand = (cards: Cards[]) => {
 };
 
 console.log(simulateGame());
-
-
-
-2 o9f
