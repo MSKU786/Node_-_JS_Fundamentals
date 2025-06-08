@@ -91,13 +91,19 @@ async function simulateGame(n: number = 2) {
   let remainingCards = 52;
   while (remainingCards > 0) {
     const hand = await runSimulation(deck_id);
-    console.log(currentPlayer, hand);
-    playerArray[currentPlayer] = [...playerArray[currentPlayer], hand];
+    playerArray[currentPlayer] = [...playerArray[currentPlayer], hand[0]];
+    console.log(
+      'Player',
+      currentPlayer + 1,
+      'Cards',
+      playerArray[currentPlayer]
+    );
     if (
       playerArray[currentPlayer]?.length >= 5 &&
       isStraightHand(playerArray[currentPlayer])
     ) {
       console.log(playerArray[currentPlayer]);
+      console.log('Player', currentPlayer + 1);
       return currentPlayer + 1;
     }
     currentPlayer++;
@@ -107,21 +113,21 @@ async function simulateGame(n: number = 2) {
 }
 
 const isStraightHand = (cards: Cards[]) => {
-  let continousCount = 0;
+  let continousCount = 1;
 
   cards.sort((a, b) => cardOrder.indexOf(a.value) - cardOrder.indexOf(b.value));
 
-  console.log('Hand', cards);
+  //console.log('cards in sorted order', cards);
 
   for (let i = 1; i < cards.length; i++) {
     if (
       cardOrder.indexOf(cards[i].value) -
-        cardOrder.indexOf(cards[i - 1].value) !=
+        cardOrder.indexOf(cards[i - 1].value) ===
       1
     ) {
       continousCount += 1;
     } else {
-      continousCount = 0;
+      continousCount = 1;
     }
 
     if (continousCount == 5) return true;
@@ -130,4 +136,4 @@ const isStraightHand = (cards: Cards[]) => {
   return false;
 };
 
-console.log(simulateGame());
+console.log(simulateGame(4));
