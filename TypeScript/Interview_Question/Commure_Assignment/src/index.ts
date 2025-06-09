@@ -86,53 +86,49 @@ const runSimulation = async (deckId: string, count: number = 1) => {
 
 async function simulateGame(n: number = 2) {
   const { deck_id } = await shuffleTheCard();
-  const playerArray = new Array(n).fill(null).map(() => new Array());
-  let currentPlayer = 0;
-  let remainingCards = 52;
-  while (remainingCards > 0) {
-    const hand = await runSimulation(deck_id);
-    playerArray[currentPlayer] = [...playerArray[currentPlayer], hand[0]];
-    console.log(
-      'Player',
-      currentPlayer + 1,
-      'Cards',
-      playerArray[currentPlayer]
-    );
+  const playerArray: Cards[][] = Array.from({ length: n }, () => []);
+  const totalCards = 52;
+  const allCards = await drawCards(deck_id, totalCards);
+
+  for (let i = 0; i < totalCards; i++) {
+    const currentPlayer = i % n;
+    playerArray[currentPlayer].push(allCards[i]);
+    // Only check for straight if player has at least 5 cards
     if (
-      playerArray[currentPlayer]?.length >= 5 &&
+      playerArray[currentPlayer].length >= 5 &&
       isStraightHand(playerArray[currentPlayer])
     ) {
-      console.log(playerArray[currentPlayer]);
+      console.log('Winning hand:', playerArray[currentPlayer]);
       console.log('Player', currentPlayer + 1);
       return currentPlayer + 1;
     }
-    currentPlayer++;
-    currentPlayer = currentPlayer % n;
-    remainingCards--;
   }
+  console.log('No player got a straight.');
+  return null;
 }
 
 const isStraightHand = (cards: Cards[]) => {
+  if (cards.length < 5) return false;
+  // Sort a copy, don't mutate original
+  const sorted = [...cards].sort(
+    (a, b) => cardOrder.indexOf(a.value) - cardOrder.indexOf(b.value)
+  );
   let continousCount = 1;
-
-  cards.sort((a, b) => cardOrder.indexOf(a.value) - cardOrder.indexOf(b.value));
-
-  //console.log('cards in sorted order', cards);
-
-  for (let i = 1; i < cards.length; i++) {
+  for (let i = 1; i < sorted.length; i++) {
     if (
-      cardOrder.indexOf(cards[i].value) -
-        cardOrder.indexOf(cards[i - 1].value) ===
+      cardOrder.indexOf(sorted[i].value) -
+        cardOrder.indexOf(sorted[i - 1].value) ===
       1
     ) {
       continousCount += 1;
-    } else {
+      if (continousCount === 5) return true;
+    } else if (
+      cardOrder.indexOf(sorted[i].value) !==
+      cardOrder.indexOf(sorted[i - 1].value)
+    ) {
       continousCount = 1;
     }
-
-    if (continousCount == 5) return true;
   }
-
   return false;
 };
 
