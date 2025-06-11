@@ -10,7 +10,7 @@ export async function processQueue() {
     return;
   }
 
-  const jobId = jobQueue.shift();
+  const { jobId, retry } = jobQueue.shift();
   if (!jobId) {
     return;
   }
@@ -24,7 +24,9 @@ export async function processQueue() {
     console.log(`${jobId} is completed`);
   } catch (error) {
     console.error(`Error processing job ${jobId}:`, error);
-
+    if (retry <= 3) {
+      jobQueue.push({ jobId, retry: retry + 1 });
+    }
     // Optionally implement retry logic here
   } finally {
     currentRunning--;
@@ -39,8 +41,8 @@ function simulateJob(jobId) {
       jobStatusMap.set(jobId, {
         status: 'Running',
       });
-      // Simulate 10% chance of failure
-      if (Math.random() < 0.1) {
+      // Simulate 20% chance of failure
+      if (Math.random() < 0.2) {
         reject(new Error('Job failed randomly'));
       } else {
         resolve();
