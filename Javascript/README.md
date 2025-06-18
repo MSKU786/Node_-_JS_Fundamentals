@@ -36,3 +36,29 @@ In JavaScript, when you put an object into an array, the array doesn't store the
 - The size of an object itself is not directly tied to the array.
 - What the array actually stores is a reference (similar to a memory address) to the object.
 - Reference size is fixed, usually 4 bytes (32 bits) or 8 bytes (64 bits) depending on the JavaScript engine and whether the system is 32-bit or 64-bit.
+
+# JavaScript's `apply`, `bind`, and `call` - Deep Explanation
+
+These three methods control the `this` context in JavaScript functions and are fundamental to function invocation.
+
+## `call()`
+
+Invokes a function with a given `this` value and arguments provided individually.
+
+### Syntax
+
+```javascript
+func.call(thisArg, arg1, arg2, ...)
+```
+
+## `bind()`
+
+The bind() method creates a new function with a specific this value and, optionally, preset initial arguments.
+
+```javascript
+let boundFunc = originalFunc.bind(thisArg, arg1, arg2, ...);
+```
+
+- thisArg: The value to bind as this inside the function.
+- arg1, arg2, ...: Optional arguments to be pre-applied (aka partial application).
+- Returns a new function (doesn't invoke it immediately).

@@ -16,6 +16,7 @@ const obj = {
 };
 
 console.log(print('obj.subjects.core.data_structure_algo'));
+console.log(print("obj['address']['flat']"));
 
 function print(path) {
   let keys = path?.split('.');
