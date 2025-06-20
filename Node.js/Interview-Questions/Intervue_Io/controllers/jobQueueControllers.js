@@ -35,7 +35,7 @@ export const addJobController = (req, res) => {
     status: 'Pending',
   });
 
-  jobQueue.push(jobId);
+  jobQueue.push({ jobId, retry: 1 });
   processQueue();
   res.status(201).json({ jobId });
 };
@@ -52,4 +52,16 @@ export const deleteJobId = (req, res) => {
   }
 
   res.status(404).json({ msg: 'Issue while deleting the job Id' });
+};
+
+export const updateMaxConcurrencyController = (req, res) => {
+  const { maxConcurrency } = req.body;
+  if (maxConcurrency < 1) {
+    return res
+      .status(400)
+      .json({ msg: 'Max concurrency must be greater than 0' });
+  }
+
+  MAX_CONCURRENCY = maxConcurrency;
+  res.status(200).json({ msg: 'Max concurrency updated successfully' });
 };
