@@ -10,52 +10,32 @@ function isValidEmailFormat(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-function validatePreference(prefernces) {
-  if (!Array.isArray(prefernces)) {
-    return false;
-  }
-
-  for (let pref of prefernces) {
-    if (typeof pref !== 'string') return false;
-  }
-
-  return true;
+function validatePreferences(preferences) {
+  return (
+    Array.isArray(preferences) &&
+    preferences.every((pref) => typeof pref === 'string')
+  );
 }
 
 app.post('/api/profile', (req, res) => {
   const { userId, name, email, age, prefernces } = req.body;
 
-  console.log(users);
-  console.log(emails);
-  if (!userId) {
-    return res.status(400).json({
-      error: 'User Id is required',
-    });
+  const errors = {};
+
+  // userId validation
+  if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+    errors.userId = 'User Id is required and must be a non-empty string.';
   }
 
-  const user = {
-    userId,
-  };
-
-  if (email) {
-    if (isValidEmailFormat(email)) {
-      console.log(emails.has(email));
-      console.log(emails.get(email));
-      if (emails.has(email) && userId != emails.get(email)) {
-        res.status(400).json({
-          error: {
-            email: 'Need unique email address',
-          },
-        });
-      } else {
-        user[email] = email;
-      }
+  // email validation
+  if (email !== undefined) {
+    if (!isValidEmailFormat(email)) {
+      errors.email = 'Invalid email format.';
     } else {
-      res.status(400).json({
-        error: {
-          email: 'Invalid email format',
-        },
-      });
+      const existingUserId = emails.get(email);
+      if (existingUserId && existingUserId !== userId) {
+        errors.email = 'Email address must be unique.';
+      }
     }
   }
 
@@ -71,29 +51,34 @@ app.post('/api/profile', (req, res) => {
     }
   }
 
-  if (age) {
-    if (typeof age === 'number' || age > 0) {
-      user[age] = age;
-    } else {
-      res.status(400).json({
-        error: {
-          age: 'Age must be a positive integer.',
-        },
-      });
+  // Age validation
+  if (age !== undefined) {
+    if (typeof age !== 'number' || !Number.isInteger(age) || age < 0) {
+      errors.age = 'Age must be positive integer';
     }
   }
 
-  if (prefernces) {
-    if (validatePreference(prefernces)) {
-      user[prefernces] = prefernces;
-    } else {
-      res.status(400).json({
-        error: {
-          age: 'Age must be a array of strings.',
-        },
-      });
+  // preferences validation
+  if (preferences !== undefined) {
+    if (!validatePreferences(preferences)) {
+      errors.preferences = 'Preferences must be an array of strings.';
     }
   }
+
+  // If any errors, return 400
+  if (Object.keys(errors).length > 0) {
+    return res.status(400).json({ errors });
+  }
+
+  // Prepare user object
+  const user = { userId };
+  if (name !== undefined) user.name = name;
+  if (email !== undefined) user.email = email;
+  if (age !== undefined) user.age = age;
+  if (preferences !== undefined) user.preferences = preferences;
+
+  // Log the update
+  console.log(`Updating profile for userId=${userId} with data:`, user);
 
   const userInDB = users.get(userId);
   if (userInDB) {
@@ -110,6 +95,13 @@ app.post('/api/profile', (req, res) => {
     }
     res.status(200).json({ message: 'Profile updated successfully.' });
   }
+
+  const existingUser = user.get(userId);
+  if (existingUser && existingUser.email && existingUser.email != email) {
+    email.set(email, userId);
+  }
+
+  return res.status(200).json({ message: 'Profile updated successfully' });
 });
 
 app.listen(PORT, () => {
