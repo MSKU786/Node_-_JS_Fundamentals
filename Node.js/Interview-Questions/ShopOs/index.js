@@ -104,6 +104,56 @@ app.post('/api/profile', (req, res) => {
   return res.status(200).json({ message: 'Profile updated successfully' });
 });
 
+/*
+
+Bonus Task: PATCH /api/profile/email — Update Only Email
+Implement a separate endpoint that only updates the email address.
+Expected Body:
+{ "userId": "user-abc-123", "email": "new.email@example.com" }
+Both fields are required.
+Apply the same email validations and uniqueness constraint.
+Return success or validation errors as in the first endpoint.
+
+
+*/
+
+app.patch('/api/profile/email', (req, res) => {
+  const errors = {};
+
+  const { userId, email } = req.body;
+
+  if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+    errors.userId = "User id need and can't be empty";
+  }
+
+  // Validate email
+  if (!email || !isValidEmailFormat(email)) {
+    errors.email = 'Email must be provided and should be in valid format';
+  } else {
+    const existingUserId = emails.get(email);
+    if (existingUserId && existingUserId !== userId) {
+      errors.email = 'Email already in use';
+    }
+  }
+
+  // If any errors, return 400
+  if (Object.keys(errors).length > 0) {
+    return res.status(400).json({ errors });
+  }
+
+  // Update user
+  const existingUser = users.get(userId);
+  if (!existingUser) {
+    return res.status(404).json({ errors: { userId: 'User not found' } });
+  }
+
+  const updatedUser = { ...existingUser, email };
+
+  users.set(userId, updatedUser);
+  emails.set(email, userId);
+  return res.status(200).json({ message: 'Profile updated successfully' });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
