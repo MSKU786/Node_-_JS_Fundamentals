@@ -67,20 +67,29 @@ const lastNDaysRating = async (
   n: number
 ) => {
   try {
+    console.log('line number 70');
     const response = await axios.get(
       `${baseUrl}/user/${username}/rating-history`
     );
     const data = response.data;
-    const prefData = data.filter(
-      (gameData: GameData) => gameData.name === prefData
-    );
+    //  console.log(data);
+    //console.log(data);
+    let prefData;
+    for (let d of data) {
+      if (d.name === perfType) {
+        prefData = d;
+      }
+      console.log(d.name);
+    }
 
-    return fetchNDaysRating(n, prefData[0]);
+    //console.log('Line number 81', prefData);
+    return fetchNDaysRating(n, prefData);
   } catch (err) {}
 };
 
 const fetchNDaysRating = (n: number, prefData: GameData) => {
   let date = getDateNDaysAgo(n);
+  //console.log(prefData, n);
   const cyear = date.getFullYear();
   const cmonth = date.getMonth();
   const cday = date.getDate();
@@ -90,6 +99,8 @@ const fetchNDaysRating = (n: number, prefData: GameData) => {
     else if (a[1] != b[1]) return a[1] - b[1];
     else return a[2] - b[2];
   });
+
+  //console.log(prefData);
 
   for (let i = 0; i < prefData.points.length; i++) {
     let { year, month, day, rating } = prefData.points[i];
@@ -112,7 +123,12 @@ const printUsers = (users: any) => {
 };
 
 async function main() {
-  const users = await fetchTopNPlayers(50, 'classical');
+  const users = await fetchTopNPlayers(10, 'classical');
+  // console.log(users);
   for (let user of users) {
+    const ans = await lastNDaysRating(user.username, 'Classical', 60);
+    console.log(ans);
   }
 }
+
+main();
