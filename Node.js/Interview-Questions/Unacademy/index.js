@@ -40,8 +40,8 @@ class LeaderBoard {
 
   submitScore(userId, score) {
     if (this.scores.has(userId)) removeExistingNode(userId);
-    this.score.set(userId, score);
-    addNewNode(userId, score);
+    this.scores.set(userId, score);
+    this.addNewNode(userId, score);
   }
 
   // 10 -> 30 => 40 => 50
@@ -54,7 +54,7 @@ class LeaderBoard {
     let i = 0;
     let ans = [];
     while (i < k && temp != null) {
-      ans.push([this.temp.id, this.temp.score]);
+      ans.push([temp.id, temp.score]);
       temp = temp.prev;
       i++;
     }
@@ -64,7 +64,7 @@ class LeaderBoard {
 
   reset(userId) {
     this.scores.remove(userId);
-    removeExistingNode(userId);
+    this.removeExistingNode(userId);
   }
 
   removeExistingNode(userId) {
@@ -80,7 +80,7 @@ class LeaderBoard {
 
   addNewNode(userId, score) {
     let node = new Node(userId, score);
-    if (head == null) {
+    if (this.head == null) {
       this.head = node;
       this.tail = node;
       this.nodeMap.set(userId, node);
@@ -122,7 +122,9 @@ class LeaderBoard {
 let leader = new LeaderBoard();
 leader.submitScore(1, 50);
 leader.submitScore(2, 30);
+
+console.log(leader.topK(2));
 leader.submitScore(3, 40);
 leader.submitScore(5, 20);
 
-console.log(topK(3));
+console.log(leader.topK(4));
