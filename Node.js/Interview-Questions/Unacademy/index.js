@@ -69,18 +69,19 @@ class LeaderBoard {
 
   removeExistingNode(userId) {
     let node = this.nodeMap.get(userId);
-    let prev = node.prev;
-    let next = node.next;
-    prev.next = next;
-    next.prev = prev;
+    if (!node) return;
+    if (node.prev) node.prev.next = node.next;
+    else this.head = node.next;
+    if (node.next) node.next.prev = node.prev;
+    else this.tail = node.prev;
     node.next = null;
     node.prev = null;
-    this.nodeMap.remove(userId);
+    this.nodeMap.delete(userId);
   }
 
   addNewNode(userId, score) {
     let node = new Node(userId, score);
-    if (this.head == null) {
+    if (!this.head) {
       this.head = node;
       this.tail = node;
       this.nodeMap.set(userId, node);
@@ -88,30 +89,29 @@ class LeaderBoard {
     }
 
     let temp = this.head;
-    while (this.temp != null && this.temp.score < score) {
+    while (temp && temp.score > score) {
       temp = temp.next;
     }
 
-    // 10 -> 30 -> 50 -> 60
-
-    if (this.temp == this.head) {
-      this.head = node;
-      node.next = temp;
-    } else if (this.temp) {
-      let prevNode = temp.prev;
-      node.next = temp;
-      node.prev = temp.prev;
-      temp.prev = node;
-      prevNode.next = node;
-    } else {
+    if (!temp) {
+      // Insert at tail
       this.tail.next = node;
       node.prev = this.tail;
-      this.tail = this.tail.next;
+      this.tail = node;
+    } else if (temp === this.head) {
+      // Insert at head
+      node.next = this.head;
+      this.head.prev = node;
+      this.head = node;
+    } else {
+      // Insert in the middle
+      let prevNode = temp.prev;
+      prevNode.next = node;
+      node.prev = prevNode;
+      node.next = temp;
+      temp.prev = node;
     }
-
     this.nodeMap.set(userId, node);
-
-    return;
   }
 }
 
