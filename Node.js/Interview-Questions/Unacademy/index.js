@@ -126,5 +126,6 @@ leader.submitScore(2, 30);
 console.log(leader.topK(2));
 leader.submitScore(3, 40);
 leader.submitScore(5, 20);
+leader.submitScore(1, 20);
 
 console.log(leader.topK(4));
