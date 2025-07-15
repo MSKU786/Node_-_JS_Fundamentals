@@ -1,12 +1,11 @@
-const phoneNumber = new Array(10000).fill(1);
+const phoneNumber = Array.from({ length: 1000 }, (_, i) => i + 1);
 
 async function sendMessage(phoneNumber) {
-  return new Promise((resolve, reject) => {
-    resolve(
-      setTimeout(() => {
-        console.log(phoneNumber);
-      }, 1000)
-    );
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(`Sending message to ${phoneNumber}`);
+      resolve();
+    }, 1000);
   });
 }
 
@@ -14,13 +13,14 @@ let index = 0;
 let limit = 100;
 async function batchCalling() {
   let workers = [];
-
+  console.log(index);
   for (let i = 0; i < limit; i++) {
-    workers.push(sendMessage(phoneNumber[index++]));
+    index++;
+    workers.push(sendMessage(phoneNumber[index]));
   }
 
   await Promise.all(workers);
-  batchCalling();
+  if (index < phoneNumber.length) batchCalling();
 }
 
 batchCalling();
