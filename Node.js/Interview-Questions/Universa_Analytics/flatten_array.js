@@ -10,3 +10,12 @@ function flattenArray(array) {
     }
   }
 }
+
+// Spread operator approach
+function flattenArray(array) {
+  return array.reduce(
+    (acc, item) =>
+      Array.isArray(item) ? [...acc, ...flattenArray(item)] : [...acc, item],
+    []
+  );
+}
