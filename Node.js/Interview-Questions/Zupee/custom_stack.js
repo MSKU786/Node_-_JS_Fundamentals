@@ -35,6 +35,7 @@ class FreqStack {
       currentList.push(val);
       this.currentMax = Math.max(this.currentMax, 1);
     }
+    console.log(`Insertion of ${val} is successfull`);
   }
 
   pop() {
@@ -52,3 +53,13 @@ class FreqStack {
     }
   }
 }
+
+let stack = new FreqStack();
+stack.push(5);
+stack.push(4);
+stack.push(2);
+stack.push(4);
+stack.push(5);
+stack.push(4);
+
+console.log(stack.pop());
