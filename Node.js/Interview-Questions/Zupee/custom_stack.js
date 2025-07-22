@@ -32,16 +32,19 @@ class FreqStack {
     } else {
       this.countMap.set(val, 1);
       let currentList = this.orderMap.get(1);
-      currentList.push(val);
+      if (currentList) currentList.push(val);
+      else {
+        this.orderMap.set(1, [val]);
+      }
       this.currentMax = Math.max(this.currentMax, 1);
     }
-    console.log(`Insertion of ${val} is successfull`);
+    console.log(`Insertion of ${val} , ${this.currentMax} is successfull`);
   }
 
   pop() {
     if (this.orderMap.has(this.currentMax)) {
       let currentList = this.orderMap.get(this.currentMax);
-      let element = this.currentList.pop();
+      let element = currentList.pop();
       if (currentList.length === 0) {
         this.orderMap.delete(this.currentMax);
         this.currentMax--;
