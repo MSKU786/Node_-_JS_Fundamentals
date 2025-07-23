@@ -23,42 +23,33 @@ Explanation: A ship capacity of 6 is the minimum to ship all the packages in 3 d
 
 */
 
-function checkValidity(mid, weights, days) {
-  let i = 0,
-    n = weights.length;
-  let current = 0;
-  while (days > 0 && i < n) {
-    current += weights[i];
-    if (current >= mid) {
-      current = weights[i];
-      days--;
+function canShip(weights, days, capacity) {
+  let requiredDays = 1;
+  let currentLoad = 0;
+  for (let w of weights) {
+    if (currentLoad + w > capacity) {
+      requiredDays++;
+      currentLoad = 0;
     }
-    i++;
+    currentLoad += w;
   }
-
-  if (i <= n - 1) {
-    return false;
-  }
-  return true;
+  return requiredDays <= days;
 }
 
 function LeastWeightCapacity(weights, days) {
-  let max = 0,
-    min = 999999;
-  for (let i = 0; i < weights.length; i++) {
-    max += weights[i];
-    min = Math.min(weights[i], min);
-  }
-  let mid = 0;
+  let min = Math.max(...weights);
+  let max = weights.reduce((a, b) => a + b, 0);
+
   while (min < max) {
-    mid = min + (max - min) / 2;
-    if (checkValidity(mid, weights, days)) {
+    let mid = Math.floor((min + max) / 2);
+    if (canShip(weights, days, mid)) {
       max = mid;
     } else {
       min = mid + 1;
     }
   }
-  return mid;
+  return min;
 }
 
-console.log(LeastWeightCapacity([3, 2, 2, 4, 1, 4], 3));
+console.log(LeastWeightCapacity([3, 2, 2, 4, 1, 4], 3)); // 6
+console.log(LeastWeightCapacity([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5)); // 15

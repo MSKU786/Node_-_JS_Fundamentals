@@ -19,30 +19,21 @@ Output: false
 
 O(n) o(N)
 */
-
 function checkIsomorphic(s, t) {
-  const mapping = new Map();
-  const mapping2 = new Map();
-  if (s.length != t.length) {
-    return false;
-  }
+  if (s.length !== t.length) return false;
+
+  const sToT = new Map();
+  const tToS = new Map();
 
   for (let i = 0; i < s.length; i++) {
-    let c1 = s.charAt(i);
-    let c2 = t.charAt(i);
+    const c1 = s[i];
+    const c2 = t[i];
 
-    if (mapping.has(c1)) {
-      let temp = mapping.get(c1);
-      if (temp != c2) {
-        return false;
-      }
-    } else {
-      if (mapping2.has(c2)) {
-        return false;
-      }
-      mapping.set(c1, c2);
-      mapping.set(c2, c1);
-    }
+    if (sToT.has(c1) && sToT.get(c1) !== c2) return false;
+    if (tToS.has(c2) && tToS.get(c2) !== c1) return false;
+
+    sToT.set(c1, c2);
+    tToS.set(c2, c1);
   }
 
   return true;
