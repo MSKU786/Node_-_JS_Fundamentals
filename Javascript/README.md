@@ -62,3 +62,13 @@ let boundFunc = originalFunc.bind(thisArg, arg1, arg2, ...);
 - thisArg: The value to bind as this inside the function.
 - arg1, arg2, ...: Optional arguments to be pre-applied (aka partial application).
 - Returns a new function (doesn't invoke it immediately).
+
+### Prototype Inheritance
+
+In JavaScript, every object has an internal link to another object called its prototype. When trying to access a property or method, JavaScript will look up the chain of prototypes (called the prototype chain) until it finds it, or returns undefined.
+
+✅ When to Use Prototype Inheritance
+
+- When creating multiple similar objects (e.g., different kinds of animals)
+- When you want shared methods (memory efficient)
+- When learning how JavaScript's object system works under the hood
