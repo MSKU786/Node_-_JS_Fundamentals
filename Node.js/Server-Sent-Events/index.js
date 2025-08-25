@@ -8,8 +8,16 @@ app.get('/', (req, res) => {
 
 app.get('/stream', (req, res) => {
   res.setHeader('Content-Type', 'text/event-stream');
-  res.write('data: ' + 'hello!');
+  send(res);
 });
+
+function send(res) {
+  res.write('data: ' + 'hello!\n\n');
+
+  setTimeout(() => {
+    send(res);
+  }, 2000);
+}
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
