@@ -1,0 +1,86 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SSE Example</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+      }
+      #events {
+        border: 1px solid #ccc;
+        padding: 20px;
+        height: 300px;
+        overflow-y: scroll;
+      }
+      .event {
+        margin: 10px 0;
+        padding: 10px;
+        background: #f0f0f0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Server-Sent Events Demo</h1>
+    <button onclick="connectSSE()">Connect to SSE</button>
+    <button onclick="disconnectSSE()">Disconnect</button>
+
+    <h3>Events:</h3>
+    <div id="events"></div>
+
+    <script>
+      let eventSource = null;
+
+      function connectSSE() {
+        if (eventSource) return;
+
+        eventSource = new EventSource('/events');
+
+        eventSource.onopen = (event) => {
+          addEvent('Connection opened', event);
+        };
+
+        eventSource.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          addEvent(`Message: ${data.message} - ${data.timestamp}`, event);
+        };
+
+        eventSource.onerror = (event) => {
+          addEvent('Error occurred', event);
+          console.error('SSE Error:', event);
+        };
+
+        // Custom event listener
+        eventSource.addEventListener('connected', (event) => {
+          addEvent('Custom event: ' + event.data, event);
+        });
+      }
+
+      function disconnectSSE() {
+        if (eventSource) {
+          eventSource.close();
+          eventSource = null;
+          addEvent('Connection closed');
+        }
+      }
+
+      function addEvent(message, event = null) {
+        const eventsDiv = document.getElementById('events');
+        const eventDiv = document.createElement('div');
+        eventDiv.className = 'event';
+        eventDiv.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+
+        if (event) {
+          eventDiv.textContent += ` (Event type: ${event.type})`;
+        }
+
+        eventsDiv.appendChild(eventDiv);
+        eventsDiv.scrollTop = eventsDiv.scrollHeight;
+      }
+
+      // Auto-connect on page load
+      window.onload = connectSSE;
+    </script>
+  </body>
+</html>

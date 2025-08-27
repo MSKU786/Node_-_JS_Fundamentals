@@ -6,8 +6,9 @@ const PORT = 8000;
 // Serve static files (HTML, CSS, JS)
 app.use(express.static('public'));
 
+// Root route to serve the HTML page
 app.get('/', (req, res) => {
-  res.send('Hello!');
+  res.sendFile(__dirname + '/public/index.html');
 });
 
 app.get('/events', (req, res) => {
