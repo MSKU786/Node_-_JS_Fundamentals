@@ -1,0 +1,20 @@
+{
+  "name": "api-stream-processor",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "API Stream Processing Example",
+  "main": "apiStreamProcessor.js",
+  "scripts": {
+    "start": "node apiStreamProcessor.js"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "keywords": [
+    "streams",
+    "api",
+    "node"
+  ],
+  "author": "",
+  "license": "ISC"
+}
