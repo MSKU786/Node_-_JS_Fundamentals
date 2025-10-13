@@ -20,26 +20,51 @@ const crypto = require('crypto');
 const stats = fs.statSync('input.txt');
 
 const readStream = fs.createReadStream('input.txt', {
-  highWaterMark: 64 * 1024,
+  highWaterMark: 12 * 1024,
 });
 
 const buffers = [];
-const hash = crypto.createHash('sha256').setEncoding('hex');
-const fileSizeInKB = stats.size / 1024;
-let i = 0;
+const hash = crypto.createHash('sha256');
+const totalBytes = stats.size;
+let bytesRead = 0;
+
 readStream.on('data', (chunk) => {
-  i++;
-  console.log('Chunk :', i, chunk.length);
-  console.log(`${(i * chunk.length) / fileSizeInKB}% file is processed`);
+  bytesRead += chunk.length;
+  const percent = ((bytesRead / totalBytes) * 100).toFixed(2);
+  console.log(`📦 Chunk size: ${chunk.length} bytes`);
+  console.log(`📊 Progress: ${percent}%`);
   hash.update(chunk);
   buffers.push(chunk);
 });
 
-readStream.on('end', () => {
+readStream.on('end', async () => {
   console.log('\n✅ File reading complete.');
   const totalBuffer = Buffer.concat(buffers);
-  hash.digest('hex');
-  console.log('Hash of input file', hash.read());
-  console.log('Hashing complete for input file');
+  const inputHash = hash.digest('hex');
+  console.log('🔹 Input file hash:', inputHash);
+
   fs.writeFileSync('output.txt', totalBuffer);
+  console.log('💾 File reassembled as output.txt');
+
+  const outputHash = await calculateFileHash('output.txt');
+  console.log('\n🔹 Input file hash :', inputHash);
+  console.log('🔹 Output file hash:', outputHash);
+
+  if (inputHash === outputHash) {
+    console.log('✅ Hashes match! File integrity verified.');
+  } else {
+    console.log('❌ Hash mismatch! Something went wrong.');
+  }
 });
+
+readStream.on('error', (err) => console.error('❌ Error:', err));
+
+function calculateFileHash(filePath) {
+  return new Promise((resolve, reject) => {
+    const hash = crypto.createHash('sha256');
+    const stream = fs.createReadStream(filePath);
+    stream.on('data', (chunk) => hash.update(chunk));
+    stream.on('end', () => resolve(hash.digest('hex')));
+    stream.on('error', reject);
+  });
+}
