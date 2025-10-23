@@ -15,5 +15,5 @@ export async function processMarkdownJob({ filepath }) {
   );
   await fs.writeFile(outputPath, htmlContent);
 
-  return outputPath;
+  return { outputPath };
 }
