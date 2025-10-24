@@ -15,18 +15,24 @@ const obj = {
   },
 };
 
-console.log(print('obj.subjects.core.data_structure_algo'));
-console.log(print("obj['address']['flat']"));
+console.log(get(obj, 'obj.subjects.core.data_structure_algo')); // 40
+console.log(get(obj, "obj['address']['flat']")); // '2323'
+console.log(get(obj, 'subjects.branch')); // 'CSE'
+console.log(get(obj, 'does.not.exist', 'default')); // 'default'
 
-function print(path) {
-  let keys = path?.split('.');
-  //console.log(keys);
-  keys.shift();
+function get(root, path, defaultValue) {
+  if (typeof path !== 'string') return defaultValue;
+  // Convert bracket notation to dot, remove leading dot and a possible root identifier like "obj."
+  const normalized = path
+    .replace(/\[(?:'([^']*)'|"([^"]*)"|([^'"\]]+))\]/g, '.$1$2$3') // ["a"] or ['a'] or [0] => .a or .0
+    .replace(/^\./, '')
+    .replace(/^[A-Za-z_$][\w$]*\./, ''); // strip leading variable name (e.g. "obj.")
+  const keys = normalized.split('.').filter(Boolean);
 
-  let tempObj = obj;
-  for (let key of keys) {
-    tempObj = tempObj[key];
+  let result = root;
+  for (const key of keys) {
+    if (result == null) return defaultValue;
+    result = result[key];
   }
-
-  return tempObj;
+  return result === undefined ? defaultValue : result;
 }
