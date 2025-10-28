@@ -1,10 +1,18 @@
 const express = require('express');
-
+const { Worker } = require('worker_threads');
 const app = express();
 const PORT = 4000;
 
 app.get('/blocking', (req, res) => {
-  res.status(200).send('This is blocking page');
+  const worker = new Worker('./worker.js');
+
+  worker.on('message', (data) => {
+    res.status(200).send(`This is blockin page ${data}`);
+  });
+
+  worker.on('error', (err) => {
+    res.status(400).send(`An error occured ${err}`);
+  });
 });
 
 app.get('/non-blocking', (req, res) => {

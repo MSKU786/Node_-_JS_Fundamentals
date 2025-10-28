@@ -6,6 +6,11 @@ import { markDownQueue } from './queue.js';
 const app = express();
 const upload = multer({ dest: 'src/uploads/' });
 
+app.post('/create', async (req, res) => {
+  const {url} = req.body;
+  const doc = 
+});
+
 app.post('/upload', upload.single('file'), async (req, res) => {
   const filePath = path.resolve(req.file.path);
   const job = await markDownQueue.createJob({ filePath }).save();

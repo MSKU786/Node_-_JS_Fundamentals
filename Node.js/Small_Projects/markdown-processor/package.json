@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@mendable/firecrawl-js": "^4.4.1",
     "bee-queue": "^1.7.1",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
