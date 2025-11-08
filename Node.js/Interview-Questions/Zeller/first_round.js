@@ -50,3 +50,25 @@ for (let i = 1; i < n; i++) {
 }
 
 console.log(a);
+
+/* Question 3 */
+let obj = {
+  name: 'Manish',
+  age: 20,
+};
+
+let arr2 = [a, a, a];
+arr2[0].name = 'Hero';
+
+console.log(arr2[2]);
+
+/* Question 4 
+
+
+Question: Is javascript call by value or call by reference?
+Answer: Javascript is call by value. But for objects and arrays, it is call by reference.
+
+Question: If javascript is single threaded, where is event loop running or other components like microtask queue, timer queue, etc. running?
+Answer: Event loop is running in the main thread. Other components like microtask queue, timer queue, etc. are running in the event loop.
+
+*/
