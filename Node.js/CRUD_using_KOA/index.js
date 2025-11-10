@@ -25,8 +25,36 @@ router.post('/users', (ctx) => {
   ctx.body = user;
 });
 
+// Get users
 router.get('/users', (ctx) => {
   ctx.body = Array.from(db.values());
+});
+
+router.delete('/users/:id', (ctx) => {
+  const id = parseInt(ctx.params.id);
+  if (!db.has(id)) {
+    ctx.status = 404;
+    ctx.body = {error: 'User not found'};
+    return;
+  }
+
+  db.delete(id);
+  ctx.status = 204;
+});
+
+//Update user info
+router.put('/users/:id', (ctx) => {
+  const id = parseInt(ctx.params.id);
+  const existingUser = db.get(id);
+  if (!existingUser) {
+    ctx.status = 404;
+    ctx.body = {error: 'User not found'};
+    return;
+  }
+  const {name, email} = ctx.request.body;
+  const updatedUser = {...existing, name, email};
+  db.set(id, updatedUser);
+  ctx.body = updatedUser;
 });
 
 // Apply routes
