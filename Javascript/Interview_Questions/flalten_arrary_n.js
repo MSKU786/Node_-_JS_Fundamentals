@@ -72,6 +72,27 @@ var flat = function (arr, n) {
   return ans;
 };
 
+// Interative approach
+function flatIter(arr, depth) {
+  if (depth === 0) return arr;
+  const res = [];
+  const stack = arr
+    .slice()
+    .reverse()
+    .map((item) => ({ item, depth }));
+  while (stack.length) {
+    const { item, depth: d } = stack.pop();
+    if (Array.isArray(item) && d > 0) {
+      for (let i = item.length - 1; i >= 0; i--) {
+        stack.push({ item: item[i], depth: d - 1 });
+      }
+    } else {
+      res.push(item);
+    }
+  }
+  return res;
+}
+
 console.log(
   flat([1, 2, 3, [4, 5, 6], [7, 8, [9, 10, 11], 12], [13, 14, 15]], 0)
 );
@@ -81,3 +102,13 @@ console.log(
 console.log(
   flat([1, 2, 3, [4, 5, 6], [7, 8, [9, 10, 11], 12], [13, 14, 15]], 2)
 );
+
+// fully flatten using reduce + spread (works, O(N) time)
+// Caveat: push(...largeArray) may hit JS argument limits for very large arrays.
+function flatAllReduce(arr) {
+  return arr.reduce((acc, item) => {
+    if (Array.isArray(item)) acc.push(...flatAllReduce(item));
+    else acc.push(item);
+    return acc;
+  }, []);
+}
