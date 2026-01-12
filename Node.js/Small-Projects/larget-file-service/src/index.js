@@ -21,6 +21,12 @@ app.get('/health', (req, res) => {
 app.post('/upload/buffer', uploadBufferMiddleware, uploadBuffer);
 
 /**
+ * 2️⃣ STREAM approach
+ * Streams request directly to S3/MinIO
+ */
+app.post('/upload/stream', uploadStream);
+
+/**
  * Start server
  */
 app.listen(PORT, () => {

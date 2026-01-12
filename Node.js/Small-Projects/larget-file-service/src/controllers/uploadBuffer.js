@@ -8,7 +8,7 @@ const upload = multer({
 
 export const uploadBufferMiddleware = upload.single('file');
 
-export const uploadBuffer = async (req: Request, res: Response) => {
+export const uploadBuffer = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
