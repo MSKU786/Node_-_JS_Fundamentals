@@ -27,6 +27,12 @@ app.post('/upload/buffer', uploadBufferMiddleware, uploadBuffer);
 app.post('/upload/stream', uploadStream);
 
 /**
+ * 3️⃣ MULTIPART approach
+ * Parallel + resumable uploads
+ */
+app.post('/upload/multipart', uploadMultipart);
+
+/**
  * Start server
  */
 app.listen(PORT, () => {
