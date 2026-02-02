@@ -1,7 +1,7 @@
 const arr = [1, 3, 4, 56, 24, 22];
 
 Array.prototype.mymap = function (...args) {
-  console.log(this);
+  console.log('--------', this);
   const fn = args[0];
   const newArr = [];
   for (let i of this) {

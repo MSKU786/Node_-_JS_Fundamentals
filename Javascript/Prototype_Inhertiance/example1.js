@@ -7,6 +7,8 @@ const user = {
 };
 
 const admin = Object.create(user);
+console.log(admin);
+admin.sayHello();
 admin.name = 'Admin';
 admin.sayHello();
 

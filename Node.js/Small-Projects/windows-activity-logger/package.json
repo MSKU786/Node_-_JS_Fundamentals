@@ -1,0 +1,24 @@
+{
+  "name": "windows-activity-logger",
+  "version": "1.0.0",
+  "description": "A simple desktop app that monitors and logs Windows activity using @miniben90/x-win",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js"
+  },
+  "keywords": [
+    "windows",
+    "activity",
+    "monitor",
+    "logger",
+    "desktop"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@miniben90/x-win": "^1.0.0"
+  }
+}
+
