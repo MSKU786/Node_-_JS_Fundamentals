@@ -3,7 +3,6 @@ const { Builder } = require('xml2js');
 const app = express();
 
 //Approach 1
-
 const xmlBuilder = new Builder();
 
 // Middleware : Detect format form accept header
