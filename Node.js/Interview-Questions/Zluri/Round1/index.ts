@@ -21,3 +21,18 @@ function winner() {
 }
 
 console.log(winner());
+
+/*
+
+class AllForOne {
+
+  increment()
+  decrement()
+
+  maxFreq()
+  minFreq()
+
+}
+
+
+*/
