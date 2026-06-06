@@ -97,3 +97,33 @@ myPromiseAll(tasks)
   .then((results) => console.log(results))
   .catch((err) => console.log(err));
 
+
+
+// Retry Mechanism
+
+const retry = async (task, maxRetries = 3) => {
+  try {
+    return await task();
+  } catch(error) {
+    if (maxRetries > 0) {
+      return retry(task, maxRetries - 1);
+    } else {
+      throw error;
+    }
+  }
+  const result = await task();
+}
+
+let attempt2 = 0;
+
+const eventuallSucceeds = () => new Promise((resolve, reject) => {
+  attempt2++;
+  console.log(`Attempt ${attempt2}`);
+  if (attemp2 < 3) {
+    reject('not yet')
+  } else {
+    resolve('finally succeeded')
+  }
+})
+
+retry(eventuallSucceeds, 3).then((result) => console.log(result)).catch((error) => console.log(error));
