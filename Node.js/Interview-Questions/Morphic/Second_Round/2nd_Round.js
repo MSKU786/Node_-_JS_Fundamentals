@@ -127,3 +127,65 @@ const eventuallSucceeds = () => new Promise((resolve, reject) => {
 })
 
 retry(eventuallSucceeds, 3).then((result) => console.log(result)).catch((error) => console.log(error));
+
+
+
+const createTask = (id, ms, shouldFail = false) => () => 
+  new Promise((resolve, reject) => {
+    console.log(`Task ${id} started`)
+    setTimeout(() => {
+      if (shouldFail) {
+        console.log(`Task ${id} failed`)
+        reject(`Task ${id} failed`)
+      } else {
+        console.log(`Task ${id} done`)
+        resolve(`Task ${id} result`)
+      }
+    },msg)
+  });
+
+
+
+const tasks2 = [
+  createTask(1, 1000),
+  createTask(2, 2000),
+  createTask(3, 1000),
+  createTask(4, 1000),
+  createTask(5, 1500),
+]
+
+
+runWithLimit(tasks, 2);
+
+const runWithLimit = (tasks, limit) => {
+  return new Promise((resolve, reject) => {
+    let completed = 0, currentIndex = 0;
+    const results = new Array(task.length);
+
+    const processTask = async (index) => {
+      try {
+        results[index] = await tasks[index]();
+        completed++;
+
+        if (completed == tasks.length) 
+          resolve(results);
+        else 
+          addNext();
+      } catch(err) {
+        reject(err);
+      }     
+    }
+
+    const addNext = () => {
+      if (currentIndex >= tasks.length) return;
+      const index = currentIndex;
+      currentIndex++;
+      processTask(index);
+    }
+
+    
+    for (let i=0; i<limit; i++) {
+      addNext();
+    }
+  })
+}
