@@ -189,3 +189,58 @@ const runWithLimit = (tasks, limit) => {
     }
   })
 }
+
+
+
+class MyPromise {
+  constructor(executor) {
+    // What state should it start in
+    this.state = 'pending'
+
+    // what value does it hold
+    this.value = undefined;
+
+    // callback holder
+    this.callbacks = [];
+
+    const resolve = (value) => {
+      if (this.state !== 'pending')
+        return;
+      this.state = 'fulfiled';
+      this.value = value;
+      for (let callback of this.callbacks) 
+        callback(this.value);
+    }
+
+    const reject = (reason) => {
+      if (this.state !== 'pending')
+        return;
+      this.state = 'failed';
+      this.value = reason;
+    }
+  
+    executor(resolve, reject);
+  }
+
+
+  then(onFullfilled) {
+    if (this.state === 'pending') {
+      this.callbacks.push(onFullfilled)
+    }
+
+    if (this.state === 'fulfilled') {
+      onFullfilled(this.value);
+    }
+  }
+
+
+}
+
+
+const p = new MyPromise((resolve) => {
+  setTimeout(() => resolve('hello'), 1000)
+})
+
+
+console.log(p);
+setTimeout(() => console.log(p), 2000);
