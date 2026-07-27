@@ -213,7 +213,7 @@ class MyPromise {
     }
 
     const reject = (reason) => {
-      if (this.state !== 'pending')
+      if (this.state !== 'pending ')
         return;
       this.state = 'failed';
       this.value = reason;
