@@ -12,15 +12,25 @@
 // Output: [1, 1, 0]
 
 
-// function fetch(temps) {
-//     let n = temps.length;
-//     let stack = [];
-//     let current = 0;
-//     for (let i=0; i<n; i++) {
-        
-//      }
-// }
+function fetch(temp) {
+    let n = temp.length;
+    let stack = [];
+    let answer = new Array(n).fill(0);
+    
+    for (let i=0; i<n; i++) {
+      while(stack.length > 0 && temp[stack[stack.length-1]] < temp[i]) {
+        let index = stack.pop();
+        answer[index] = i - index;
+      }
+      stack.push(i);
+    }
+    console.log(answer);
+}
 
+
+fetch([65, 70, 68, 60, 55, 75, 80, 74]);
+fetch([30 , 40, 50, 60])
+fetch([30, 60, 90])
 
 
 // n2 
@@ -32,5 +42,8 @@
 
 
 // stack = []
+
+
+
 
 
