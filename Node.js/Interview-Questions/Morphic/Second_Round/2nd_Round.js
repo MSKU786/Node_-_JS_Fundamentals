@@ -10,13 +10,6 @@ async function main() {
 
 main();
 
-// Now main chaellnege to replace promise with our own implementation
-
-class MyPromise {
-  constructor(executor) {
-  }
-}
-
 
 
 
