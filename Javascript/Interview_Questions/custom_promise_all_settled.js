@@ -2,7 +2,7 @@ const customPromiseAllSettled = (tasks) => {
   if (!Array.isArray(tasks)) {
     throw new Error('tasks should be an array');
   }
-  const promise = new Promise((resolve, reject) => {
+  const promise = new Promise(async (resolve, reject) => {
     let solutions = new Array(tasks.length).fill(null);
     let completed = 0;
     for (let i = 0; i < tasks.length; i++) {
@@ -20,3 +20,4 @@ const customPromiseAllSettled = (tasks) => {
 
   return promise;
 };
+
