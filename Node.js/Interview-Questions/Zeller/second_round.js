@@ -6,6 +6,8 @@ const delay = (time, value) =>
       resolve(value);
     }, time)
   );
+
+
 const tasks = [
   delay(1000, 'A'),
   delay(500, 'B'),
@@ -13,6 +15,7 @@ const tasks = [
   delay(300, 'D'),
   delay(800, 'E'),
 ];
+
 
 const myPromiseAll = async (promises, concurrency) => {
   let index = 0;
@@ -37,11 +40,13 @@ const myPromiseAll = async (promises, concurrency) => {
   return promiseResult;
 };
 
+
 async function main() {
   const resolvedPromise = await myPromiseAll(tasks, 2);
   const mainPromised = await Promise.all(tasks);
   console.log(mainPromised);
   console.log(resolvedPromise);
 }
+
 
 main();
